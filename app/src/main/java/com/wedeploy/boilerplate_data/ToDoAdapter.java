@@ -13,37 +13,37 @@ import java.util.List;
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder> {
 
-	private List<String> todos;
+  private List<String> todos;
 
-	public ToDoAdapter(List<String> todos) {
-		this.todos = todos;
-	}
+  public ToDoAdapter(List<String> todos) {
+    this.todos = todos;
+  }
 
-	@Override
-	public ToDoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-		TodoItemBinding binding = TodoItemBinding.inflate(layoutInflater, parent, false);
+  @Override
+  public ToDoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+    TodoItemBinding binding = TodoItemBinding.inflate(layoutInflater, parent, false);
 
-		return new ToDoViewHolder(binding);
-	}
+    return new ToDoViewHolder(binding);
+  }
 
-	@Override
-	public void onBindViewHolder(ToDoViewHolder holder, int position) {
-		holder.binding.setTodo(todos.get(position));
-	}
+  @Override
+  public void onBindViewHolder(ToDoViewHolder holder, int position) {
+    holder.binding.setTodo(todos.get(position));
+  }
 
-	@Override
-	public int getItemCount() {
-		return todos.size();
-	}
+  @Override
+  public int getItemCount() {
+    return todos.size();
+  }
 
-	class ToDoViewHolder extends RecyclerView.ViewHolder {
+  class ToDoViewHolder extends RecyclerView.ViewHolder {
 
-		TodoItemBinding binding;
+    TodoItemBinding binding;
 
-		ToDoViewHolder(TodoItemBinding binding) {
-			super(binding.getRoot());
-			this.binding = binding;
-		}
-	}
+    ToDoViewHolder(TodoItemBinding binding) {
+      super(binding.getRoot());
+      this.binding = binding;
+    }
+  }
 }

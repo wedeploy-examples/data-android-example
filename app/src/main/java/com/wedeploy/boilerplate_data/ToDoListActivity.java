@@ -21,93 +21,93 @@ import org.json.JSONException;
 
 public class ToDoListActivity extends AppCompatActivity {
 
-	private static final String DATA_URL = "https://data-boilerplatedata.wedeploy.io";
+  private static final String DATA_URL = "https://data-boilerplatedata.wedeploy.io";
 
-	private ToDoAdapter adapter;
-	private List<String> todos = new ArrayList<>();
-	private WeDeploy weDeploy;
+  private ToDoAdapter adapter;
+  private List<String> todos = new ArrayList<>();
+  private WeDeploy weDeploy;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.to_do_list_activity);
-		adapter = new ToDoAdapter(todos);
-		weDeploy = new WeDeploy.Builder().build();
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.to_do_list_activity);
+    adapter = new ToDoAdapter(todos);
+    weDeploy = new WeDeploy.Builder().build();
 
-		ToDoListActivityBinding binding =
-			DataBindingUtil.setContentView(this, R.layout.to_do_list_activity);
+    ToDoListActivityBinding binding =
+      DataBindingUtil.setContentView(this, R.layout.to_do_list_activity);
 
-		binding.todoList.setAdapter(adapter);
-		binding.todoList.setLayoutManager(
-			new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-		binding.todoList.addItemDecoration(
-			new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-		binding.todoList.setItemAnimator(new DefaultItemAnimator());
+    binding.todoList.setAdapter(adapter);
+    binding.todoList.setLayoutManager(
+      new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+    binding.todoList.addItemDecoration(
+      new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    binding.todoList.setItemAnimator(new DefaultItemAnimator());
 
-		binding.goToHome.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
+    binding.goToHome.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
-		populateList();
-	}
+    populateList();
+  }
 
-	private void populateList() {
-		weDeploy.data(DATA_URL)
-			.limit(5)
-			.orderBy("id", SortOrder.DESCENDING)
-			.get("tasks")
-			.execute(new Callback() {
-				@Override
-				public void onSuccess(Response response) {
-					try {
-						JSONArray array = new JSONArray(response.getBody());
-						parseAndAddTodos(array);
-					} catch (JSONException e) {
-						onFailure(e);
-					}
-				}
+  private void populateList() {
+    weDeploy.data(DATA_URL)
+      .limit(5)
+      .orderBy("id", SortOrder.DESCENDING)
+      .get("tasks")
+      .execute(new Callback() {
+        @Override
+        public void onSuccess(Response response) {
+          try {
+            JSONArray array = new JSONArray(response.getBody());
+            parseAndAddTodos(array);
+          } catch (JSONException e) {
+            onFailure(e);
+          }
+        }
 
-				@Override
-				public void onFailure(Exception e) {
-					Toast.makeText(ToDoListActivity.this, "Error loading todos", Toast.LENGTH_SHORT)
-						.show();
-				}
-			});
+        @Override
+        public void onFailure(Exception e) {
+          Toast.makeText(ToDoListActivity.this, "Error loading todos", Toast.LENGTH_SHORT)
+            .show();
+        }
+      });
 
-		weDeploy.data(DATA_URL)
-			.limit(5)
-			.orderBy("id", SortOrder.DESCENDING)
-			.watch("tasks")
-			.on("changes", new RealTime.OnEventListener() {
-				@Override
-				public void onEvent(final Object... objects) {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								JSONArray array = (JSONArray) objects[0];
-								parseAndAddTodos(array);
-							} catch (JSONException e) {
-								Toast.makeText(ToDoListActivity.this, "Error loading todos",
-									Toast.LENGTH_SHORT).show();
-							}
-						}
-					});
-				}
-			});
-	}
+    weDeploy.data(DATA_URL)
+      .limit(5)
+      .orderBy("id", SortOrder.DESCENDING)
+      .watch("tasks")
+      .on("changes", new RealTime.OnEventListener() {
+        @Override
+        public void onEvent(final Object... objects) {
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              try {
+                JSONArray array = (JSONArray) objects[0];
+                parseAndAddTodos(array);
+              } catch (JSONException e) {
+                Toast.makeText(ToDoListActivity.this, "Error loading todos",
+                  Toast.LENGTH_SHORT).show();
+              }
+            }
+          });
+        }
+      });
+  }
 
-	private void parseAndAddTodos(JSONArray array) throws JSONException {
-		List<String> newTodos = new ArrayList<>(array.length());
-		for (int i = 0; i < array.length(); i++) {
-			newTodos.add(array.getJSONObject(i).optString("name", ""));
-		}
+  private void parseAndAddTodos(JSONArray array) throws JSONException {
+    List<String> newTodos = new ArrayList<>(array.length());
+    for (int i = 0; i < array.length(); i++) {
+      newTodos.add(array.getJSONObject(i).optString("name", ""));
+    }
 
-		todos.clear();
-		todos.addAll(newTodos);
-		adapter.notifyDataSetChanged();
-	}
+    todos.clear();
+    todos.addAll(newTodos);
+    adapter.notifyDataSetChanged();
+  }
 }
